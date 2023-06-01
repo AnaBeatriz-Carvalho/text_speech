@@ -1,8 +1,10 @@
 import azure.cognitiveservices.speech as speechsdk
 from flask import Flask, request, jsonify
 from playsound import playsound
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 speech_key = '7cf7dde62a234b11a42c323fac003037'
 service_region = 'eastus'
@@ -18,13 +20,12 @@ def text_to_speech():
     resultado = speech_synthesizer.speak_text_async(text).get()
     stream = speechsdk.AudioDataStream(resultado)
     
-    audio_file = 'output.wav'
+    audio_file = '../output.wav'
     stream.save_to_wav_file(audio_file)
     
-    playsound(audio_file)
     
-    return jsonify({'message': 'Audio file created and played successfully.'})
+    return jsonify({'message': 'Áudio criado e reproduzido com sucesso.'})
 
 if __name__ == '__main__':
-    app.run()
     app.debug = True
+    app.run()
