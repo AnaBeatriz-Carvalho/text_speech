@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { ToastProvider, useToasts } from "react-toast-notifications";
 
 export default function TextToSpeech() {
   const [text, setText] = useState("");
+  const { addToast } = useToasts();
 
   const handleTextChange = (event) => {
     setText(event.target.value);
@@ -22,12 +24,13 @@ export default function TextToSpeech() {
         const url = URL.createObjectURL(blob);
         const audio = new Audio(url);
         audio.play();
+        addToast("Áudio gerado com sucesso", { appearance: "success" });
       } else {
-        throw new Error("Erro ao converter o texto em áudio");
+        addToast("Erro ao converter o texto em áudio", { appearance: "error" });
       }
     } catch (error) {
       console.error(error);
-      alert("Erro ao converter o texto em áudio");
+      addToast("Erro ao converter o texto em áudio", { appearance: "error" });
     }
   };
 
