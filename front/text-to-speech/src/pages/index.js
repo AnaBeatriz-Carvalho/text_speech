@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export default function TextToSpeech() {
   const [text, setText] = useState("");
-  const [audioUrl, setAudioUrl] = useState("");
-
-  useEffect(() => {
-    console.log(text);
-  }, [text]);
 
   const handleTextChange = (event) => {
     setText(event.target.value);
@@ -23,10 +18,10 @@ export default function TextToSpeech() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        // Faça algo com a resposta do servidor
-        console.log(data);
-        alert(data.message);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.play();
       } else {
         throw new Error("Erro ao converter o texto em áudio");
       }
@@ -45,7 +40,6 @@ export default function TextToSpeech() {
         placeholder="Digite o texto que deseja converter em áudio"
       />
       <button onClick={convertToSpeech}>Converter para Áudio</button>
-      {audioUrl && <audio src={`http://localhost:5000${audioUrl}`} controls />}
     </div>
   );
 }
