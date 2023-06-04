@@ -44,15 +44,18 @@ export default function TextToSpeech() {
       formData.append("text", text);
       formData.append("image", image);
 
-      const response = await fetch("http://localhost:5000/convert", {
+      const response = await fetch("http://localhost:5000/image-to-text", {
         method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
         body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
         const convertedText = data.converted_text;
-        // Fazer algo com o texto convertido
+
         addToast("Imagem convertida em texto com sucesso", {
           appearance: "success",
         });

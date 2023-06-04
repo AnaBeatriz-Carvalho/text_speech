@@ -4,8 +4,16 @@ from playsound import playsound
 from flask_cors import CORS
 from pydub import AudioSegment
 import ffmpeg
+from flask import request, jsonify
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from msrest.authentication import CognitiveServicesCredentials
+from flask import Flask, request, jsonify
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 
+# from azure.cognitiveservices.vision.computervision.models import (
+#     TextOperationStatusCodes,
+# )
+from msrest.authentication import CognitiveServicesCredentials
 
 app = Flask(__name__)
 CORS(app)
@@ -38,18 +46,20 @@ def text_to_speech():
 
 @app.route("/image-to-text", methods=["POST"])
 def image_to_text():
-    image_url = request.json["image_url"]
+    image = request.files["image"]
+    image_bytes = image.read()  # Lê os bytes da imagem
+
     computervision_client = ComputerVisionClient(
         endpoint, CognitiveServicesCredentials(subscription_key)
     )
 
     # Chama a API de visão computacional para reconhecer o texto na imagem
-    response = computervision_client.recognize_printed_text(image_url)
+    response = computervision_client.recognize_printed_text_in_stream(image_bytes)
 
     # Processa a resposta da API e extrai o texto
     extracted_text = ""
     if response.status == TextOperationStatusCodes.succeeded:
-        for region in response.recognition_result.regions:
+        for region in response.regions:
             for line in region.lines:
                 for word in line.words:
                     extracted_text += word.text + " "
