@@ -4,9 +4,14 @@ import { ToastProvider, useToasts } from "react-toast-notifications";
 export default function TextToSpeech() {
   const [text, setText] = useState("");
   const { addToast } = useToasts();
+  const [image, setImage] = useState(null);
 
   const handleTextChange = (event) => {
     setText(event.target.value);
+  };
+  const handleImageChange = (event) => {
+    const selectedImage = event.target.files[0];
+    setImage(selectedImage);
   };
 
   const convertToSpeech = async () => {
@@ -33,16 +38,51 @@ export default function TextToSpeech() {
       addToast("Erro ao converter o texto em áudio", { appearance: "error" });
     }
   };
+  const convertToImage = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("text", text);
+      formData.append("image", image);
+
+      const response = await fetch("http://localhost:5000/convert", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const convertedText = data.converted_text;
+        // Fazer algo com o texto convertido
+        addToast("Imagem convertida em texto com sucesso", {
+          appearance: "success",
+        });
+      } else {
+        addToast("Erro ao converter a imagem em texto", {
+          appearance: "error",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      addToast("Erro ao converter a imagem em texto", { appearance: "error" });
+    }
+  };
 
   return (
-    <div>
-      <h1>Text to Speech</h1>
-      <textarea
-        value={text}
-        onChange={handleTextChange}
-        placeholder="Digite o texto que deseja converter em áudio"
-      />
-      <button onClick={convertToSpeech}>Converter para Áudio</button>
-    </div>
+    <>
+      <div>
+        <h1>Text to Speech</h1>
+        <textarea
+          value={text}
+          onChange={handleTextChange}
+          placeholder="Digite o texto que deseja converter em áudio"
+        />
+        <button onClick={convertToSpeech}>Converter para Áudio</button>
+      </div>
+      <div>
+        <h1>Imagem em Texto</h1>
+        <input type="file" onChange={handleImageChange} />
+        <button onClick={convertToImage}>Converter para Texto</button>
+      </div>
+    </>
   );
 }
