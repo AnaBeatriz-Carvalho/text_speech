@@ -11,8 +11,16 @@ CORS(app)
 speech_key = "7cf7dde62a234b11a42c323fac003037"
 service_region = "eastus"
 
-subscription_key = "c1f12209e9504dd6bdc762108f7db4b5"
+subscription_key = "b00d390dfe1b42239ee46f13e2a24046"
 endpoint = "https://computer-vision-ana.cognitiveservices.azure.com/"
+
+
+@app.after_request
+def after_request(response):
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    response.headers.add("Access-Control-Allow-Methods", "POST")
+    return response
 
 
 @app.route("/text-to-speech", methods=["POST"])
@@ -34,7 +42,7 @@ def text_to_speech():
     return send_file(audio_file, mimetype="audio/wav", as_attachment=True)
 
 
-@app.route("/image-to-text", methods=["POST"])
+@app.route("/image-to-text", methods=["OPTIONS", "POST"])
 def image_to_text():
     image = request.files["image"]
     image_bytes = image.read()  # Lê os bytes da imagem
@@ -50,7 +58,18 @@ def image_to_text():
         for line in region.lines:
             for word in line.words:
                 extracted_text += word.text + " "
-                return jsonify(extracted_text)
+
+    return jsonify({"converted_text": extracted_text})
+
+
+@app.route("/image-to-text", methods=["OPTIONS"])
+def handle_options():
+    headers = {
+        "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Methods": "POST",
+        "Access-Control-Allow-Headers": "Content-Type",
+    }
+    return "", 200, headers
 
 
 if __name__ == "__main__":

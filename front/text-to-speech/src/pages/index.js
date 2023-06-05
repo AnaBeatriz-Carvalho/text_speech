@@ -44,17 +44,9 @@ export default function TextToSpeech() {
       const formData = new FormData();
 
       formData.append("image", image);
-      let contentType = "";
-      if (image.type === "image/jpeg") {
-        contentType = "image/jpeg";
-      } else if (image.type === "image/png") {
-        contentType = "image/png";
-      }
+
       const response = await fetch("http://localhost:5000/image-to-text", {
         method: "POST",
-        headers: {
-          "Content-Type": contentType,
-        },
         body: formData,
       });
 
@@ -92,7 +84,7 @@ export default function TextToSpeech() {
 
       <div>
         <h1>Imagem para Texto</h1>
-        <input type="file" onChange={handleImageChange} />
+        <input type="file" name="image" onChange={handleImageChange} />
         <div>
           <button onClick={convertToImage}>Converter para Texto</button>
         </div>
