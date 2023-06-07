@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ToastProvider, useToasts } from "react-toast-notifications";
 import "./styles.css";
 import axios from "axios";
+import { AiFillPlayCircle } from "react-icons/ai";
 
 export default function TextToSpeech() {
   const [text, setText] = useState("");
@@ -10,12 +11,25 @@ export default function TextToSpeech() {
   const [imagem, setImagem] = useState(null);
   const [imagenm, setimagenm] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-
+  const [speechText, setSpeechText] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const handleImagemChange = (event) => {
     setImagem(event.target.files[0]);
     setImageUrl(URL.createObjectURL(event.target.files[0]));
     console.log(imagem);
   };
+  useEffect(() => {
+    if (isSpeaking && speechText) {
+      const utterance = new SpeechSynthesisUtterance(speechText);
+      utterance.lang = "pt-BR"; // Defina o idioma conforme necessário
+
+      utterance.onend = () => {
+        setIsSpeaking(false);
+      };
+
+      speechSynthesis.speak(utterance);
+    }
+  }, [isSpeaking, speechText]);
 
   useEffect(() => {
     const imagename = imagem;
@@ -30,7 +44,6 @@ export default function TextToSpeech() {
   const handleTextChange = (event) => {
     setText(event.target.value);
   };
-
   const convertToSpeech = async () => {
     try {
       const response = await fetch("http://localhost:5000/text-to-speech", {
@@ -79,13 +92,22 @@ export default function TextToSpeech() {
         const text = parsedJSON.data.regions.flatMap((region) =>
           region.lines.flatMap((line) => line.words.map((word) => word.text))
         );
-        setConvertedText(text.join(" "));
-        console.log(text.join(" "));
+        const convertedText = text.join(" ");
+        setConvertedText(convertedText);
+        setSpeechText(convertedText);
+        console.log(convertedText);
         console.log(toparse);
       })
       .catch((error) => {
-        console.log(error);
+        addToast("Erro ao extrair texto da imagem", { appearance: "error" });
       });
+  };
+
+  const reproduzirTexto = () => {
+    const utterance = new SpeechSynthesisUtterance(convertedText);
+    utterance.lang = "pt-BR"; // Defina o idioma conforme necessário
+
+    speechSynthesis.speak(utterance);
   };
 
   return (
@@ -114,8 +136,15 @@ export default function TextToSpeech() {
           <h1 className="Imagem-carregada">Imagem Carregada: {imagenm}</h1>
           <button onClick={extrairTextoDaImagem}>Enviar</button>
           <div>
-            <h1>Texto Extraido:</h1>
+            <h1>Texto Extraído:</h1>
             <h1 className="Imagem-carregada">{convertedText}</h1>
+            {convertedText && (
+              <div>
+                <button onClick={reproduzirTexto}>
+                  <AiFillPlayCircle size={20} /> Reproduzir Texto
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
