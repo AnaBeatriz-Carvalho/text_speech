@@ -12,6 +12,7 @@
     font-size: 24px;
     color: #333;
     margin-bottom: 10px;
+    margin-left: 8px;
   }
   
   textarea {
@@ -22,9 +23,12 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     resize: vertical;
+    margin-left: 13px;
+    margin-bottom: 10px;
   }
   
   button {
+    margin-left: 20px;
     background-color: #007bff;
     color: #fff;
     padding: 10px 20px;
@@ -41,6 +45,7 @@
     padding: 5px;
     font-size: 16px;
     color: #333;
+    display: none;
     
   }
   
@@ -70,4 +75,35 @@
   .toast-error {
     background-color: #dc3545;
   }
+
+  .Container-Image{
+    display: flex;
+    max-width:30%;
+     align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .input-label{
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    border-color: #333;
+    width: 200px;
+    height: 100px;
+  }
+
+  .h1-label{
+    margin-left: 26px;
+    font-size: 17px;
+  }
   
+  .Imagem-carregada{
+    font-size: 13px;
+    margin-left: 15px;
+  }

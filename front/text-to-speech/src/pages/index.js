@@ -1,18 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastProvider, useToasts } from "react-toast-notifications";
 import "./styles.css";
+import axios from "axios";
+
 export default function TextToSpeech() {
   const [text, setText] = useState("");
   const { addToast } = useToasts();
-  const [image, setImage] = useState(null);
   const [convertedText, setConvertedText] = useState("");
+  const [imagem, setImagem] = useState(null);
+  const [imagenm, setimagenm] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
+  const handleImagemChange = (event) => {
+    setImagem(event.target.files[0]);
+    setImageUrl(URL.createObjectURL(event.target.files[0]));
+    console.log(imagem);
+  };
+
+  useEffect(() => {
+    const imagename = imagem;
+    console.log(imagem);
+    if (imagename && imagename.name != null) {
+      setimagenm(imagename.name);
+      console.log(imagenm);
+    } else {
+      setimagenm("");
+    }
+  }, [imagem]);
   const handleTextChange = (event) => {
     setText(event.target.value);
-  };
-  const handleImageChange = (event) => {
-    const selectedImage = event.target.files[0];
-    setImage(selectedImage);
   };
 
   const convertToSpeech = async () => {
@@ -39,33 +55,37 @@ export default function TextToSpeech() {
       addToast("Erro ao converter o texto em áudio", { appearance: "error" });
     }
   };
-  const convertToImage = async () => {
-    try {
-      const formData = new FormData();
+  const extrairTextoDaImagem = async () => {
+    const formData = new FormData();
+    formData.append("imagem", imagem);
 
-      formData.append("image", image);
+    let config = {
+      method: "POST",
+      maxBodyLength: Infinity,
+      url: "https://testeana-vision.cognitiveservices.azure.com/vision/v3.2/ocr",
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Ocp-Apim-Subscription-Key": "950d713325ef4443a39a7916d233b911",
+        "Ocp-Apim-Subscription-Region": "eastus",
+      },
+      data: formData,
+    };
 
-      const response = await fetch("http://localhost:5000/image-to-text", {
-        method: "POST",
-        body: formData,
+    axios
+      .request(config)
+      .then((response) => {
+        const toparse = JSON.stringify(response);
+        const parsedJSON = JSON.parse(toparse);
+        const text = parsedJSON.data.regions.flatMap((region) =>
+          region.lines.flatMap((line) => line.words.map((word) => word.text))
+        );
+        setConvertedText(text.join(" "));
+        console.log(text.join(" "));
+        console.log(toparse);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        const convertedText = data.converted_text;
-        setConvertedText(convertedText);
-        addToast("Imagem convertida em texto com sucesso", {
-          appearance: "success",
-        });
-      } else {
-        addToast("Erro ao converter a imagem em texto", {
-          appearance: "error",
-        });
-      }
-    } catch (error) {
-      // console.error(error);
-      addToast("Algum erro ocorreu", { appearance: "error" });
-    }
   };
 
   return (
@@ -83,18 +103,21 @@ export default function TextToSpeech() {
       </div>
 
       <div>
-        <h1>Imagem para Texto</h1>
-        <input type="file" name="image" onChange={handleImageChange} />
-        <div>
-          <button onClick={convertToImage}>Converter para Texto</button>
-        </div>
-
-        {convertedText && (
+        <h1>Extraindo Texto de uma Imagem</h1>
+        <div className="Container-Image">
+          <label>
+            <div className="input-label">
+              <h1 className="h1-label">Clique aqui para escolher a imagem</h1>
+            </div>
+            <input type="file" onChange={handleImagemChange} />
+          </label>
+          <h1 className="Imagem-carregada">Imagem Carregada: {imagenm}</h1>
+          <button onClick={extrairTextoDaImagem}>Enviar</button>
           <div>
-            <h2>Texto Convertido:</h2>
-            <p>{convertedText}</p>
+            <h1>Texto Extraido:</h1>
+            <h1 className="Imagem-carregada">{convertedText}</h1>
           </div>
-        )}
+        </div>
       </div>
     </>
   );
