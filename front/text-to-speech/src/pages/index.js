@@ -97,6 +97,7 @@ export default function TextToSpeech() {
         setSpeechText(convertedText);
         console.log(convertedText);
         console.log(toparse);
+        addToast("Texto extraído com sucesso", { appearance: "success" });
       })
       .catch((error) => {
         addToast("Erro ao extrair texto da imagem", { appearance: "error" });
