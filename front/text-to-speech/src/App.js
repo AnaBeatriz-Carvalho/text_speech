@@ -5,14 +5,9 @@ import { ToastProvider } from "react-toast-notifications";
 
 function App() {
   return (
-    // <Router>
-    //   <Routes>
-    //     <Route path="/" element={<TextToSpeech />} />
     <ToastProvider>
       <TextToSpeech />
     </ToastProvider>
-    //   </Routes>
-    // </Router>
   );
 }
 

@@ -21,7 +21,7 @@ export default function TextToSpeech() {
   useEffect(() => {
     if (isSpeaking && speechText) {
       const utterance = new SpeechSynthesisUtterance(speechText);
-      utterance.lang = "pt-BR"; // Defina o idioma conforme necessário
+      utterance.lang = "pt-BR";
 
       utterance.onend = () => {
         setIsSpeaking(false);
@@ -75,11 +75,11 @@ export default function TextToSpeech() {
     let config = {
       method: "POST",
       maxBodyLength: Infinity,
-      url: "https://testeana-vision.cognitiveservices.azure.com/vision/v3.2/ocr",
+      url: "LINK DISPONIBILIZADO NO AZURE",
       headers: {
         "Content-Type": "multipart/form-data",
         "Ocp-Apim-Subscription-Key": "950d713325ef4443a39a7916d233b911",
-        "Ocp-Apim-Subscription-Region": "eastus",
+        "Ocp-Apim-Subscription-Region": "REGIÃO DISPONIBILIZADA NO AZURE",
       },
       data: formData,
     };
@@ -106,8 +106,7 @@ export default function TextToSpeech() {
 
   const reproduzirTexto = () => {
     const utterance = new SpeechSynthesisUtterance(convertedText);
-    utterance.lang = "pt-BR"; // Defina o idioma conforme necessário
-
+    utterance.lang = "pt-BR";
     speechSynthesis.speak(utterance);
   };
 

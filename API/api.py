@@ -8,8 +8,8 @@ import azure.cognitiveservices.speech as speechsdk
 app = Flask(__name__)
 CORS(app)
 
-speech_key = "7cf7dde62a234b11a42c323fac003037"
-service_region = "eastus"
+speech_key = "KEY DISPONIBILIZADA NO AZURE"
+service_region = "REGIÃO DISPONIBILIZADA NO AZURE"
 
 
 @app.after_request
