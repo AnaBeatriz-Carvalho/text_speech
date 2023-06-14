@@ -78,7 +78,7 @@ export default function TextToSpeech() {
       url: "LINK DISPONIBILIZADO NO AZURE",
       headers: {
         "Content-Type": "multipart/form-data",
-        "Ocp-Apim-Subscription-Key": "950d713325ef4443a39a7916d233b911",
+        "Ocp-Apim-Subscription-Key": "KEY DISPONIBILIZADA NO AZURE",
         "Ocp-Apim-Subscription-Region": "REGIÃO DISPONIBILIZADA NO AZURE",
       },
       data: formData,
