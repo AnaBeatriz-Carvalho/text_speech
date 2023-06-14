@@ -5,3 +5,5 @@ Uma aplicação acessível e útil com integração com a Azure em que existem d
 
 Foi feita uma API em Flask para alimentar a funcionalidade de converter texto em voz e a integração da imagem convertida em texto foi feito no próprio Front.
 - Front feito em React
+
+Para ter acesso as chaves das API da Azure precisa ter um cadastro e serviço do Text To Speech e Computer Vision.
